@@ -20,15 +20,9 @@ const COOKIE_OPTIONS = {
 
 // ─── Helper: generate JWT ────────────────────────────────────────
 const generateToken = (payload) =>
-  jwt.sign(payload, process.env.JWT_SECRET || "change-this-secret", {
+  jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
-
-const getUserDisplayName = (user) => {
-  if (user?.name) return user.name;
-  const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ");
-  return fullName || user?.email || "PSGPS User";
-};
 
 // @route   POST /api/auth/register
 exports.register = async (req, res) => {
@@ -226,12 +220,9 @@ exports.login = async (req, res) => {
 
       return res.json({
         message: "Admin login successful",
-        token,
         user: {
           _id: user._id,
-          name: getUserDisplayName(user),
-          firstName: user.firstName,
-          lastName: user.lastName,
+          name: user.name,
           email: user.email,
           role: user.role,
           department: user.department,
@@ -275,12 +266,11 @@ exports.login = async (req, res) => {
       message: alumni.isApproved
         ? "Login successful"
         : "Login successful. Awaiting admin approval.",
-      token,
+
       user: {
         _id: alumni._id,
         firstName: alumni.firstName,
         lastName: alumni.lastName,
-        name: getUserDisplayName(alumni),
         email: alumni.email,
         role: "alumni",
         isApproved: alumni.isApproved,
@@ -396,11 +386,11 @@ exports.forgotPassword = async (req, res) => {
     //console.log(`\n📧 OTP for ${email}: ${otp} (expires in 10 minutes)\n`);
 
     await transporter.sendMail({
-      from: `"PSG Alumni"<${process.env.EMAIL_USER}>`,
+      from: `"PSG ARTS Alumni Association"<${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Password Reset OTP",
+      subject: "Password Set OTP",
       html: `
-        <h2>Pasword Reset Request</h2>
+        <h2>Password Set Request</h2>
         <p>Your OTP is:</p>
         <h1>${otp}</h1>
         <p>This OTP is valid for 5 minutes.</p>

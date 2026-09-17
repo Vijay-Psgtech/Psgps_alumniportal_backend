@@ -11,7 +11,7 @@ const {
   verifyOtp,
   resetPassword,
 } = require("../controllers/authController");
-const { verifyToken: authMiddleware } = require("../middleware/auth");
+const { authMiddleware } = require("../middleware/auth");
 const { alumniUpload } = require("../middleware/alumniUploads");
 const { generateAlumniId } = require("../middleware/generateAlumniId");
 
