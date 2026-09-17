@@ -2,13 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
+dotenv.config();
+
 const bcrypt = require("bcryptjs");
 const connectDB = require("./config/db");
 const User = require("./models/Users");
-const bannerRoutes = require("./routes/bannerRoutes");
-const notificationRoutes = require("./routes/scrollRoutes");
 
-dotenv.config();
+
 
 const app = express();
 
