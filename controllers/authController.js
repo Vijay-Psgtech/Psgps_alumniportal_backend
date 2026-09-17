@@ -33,24 +33,10 @@ exports.register = async (req, res) => {
       email,
       password,
       phone,
-      rollNumber,
       gender,
       occupation,
-      department,
-      programmeType,
-      degree,
+      stream,
       batchYear,
-      studyStartYear,
-      studyEndYear,
-      jobTitle,
-      currentCompany,
-      industry,
-      officeContact,
-      linkedin,
-      twitter,
-      instagram,
-      facebook,
-      website,
       city,
       country,
       fullAddress,
@@ -78,31 +64,9 @@ exports.register = async (req, res) => {
       ? JSON.parse(req.body.coordinates)
       : [0, 0];
 
-    const officeAddress = req.body.officeAddress
-      ? JSON.parse(req.body.officeAddress)
-      : {};
-
-    const files = {
-      businessCard: req.files?.businessCard?.[0]
-        ? `alumni/${req.alumniId}/${req.files.businessCard[0].filename}`
-        : null,
-
-      idCard: req.files?.idCard?.[0]
-        ? `alumni/${req.alumniId}/${req.files.idCard[0].filename}`
-        : null,
-
-      entrepreneurPoster: req.files?.entrepreneurPoster?.[0]
-        ? `alumni/${req.alumniId}/${req.files.entrepreneurPoster[0].filename}`
-        : null,
-
-      studentPhoto: req.files?.studentPhoto?.[0]
-        ? `alumni/${req.alumniId}/${req.files.studentPhoto[0].filename}`
-        : null,
-
-      currentPhoto: req.files?.currentPhoto?.[0]
-        ? `alumni/${req.alumniId}/${req.files.currentPhoto[0].filename}`
-        : null,
-    };
+    const currentPhoto = req.files?.currentPhoto?.[0]
+      ? `alumni/${req.alumniId}/${req.files.currentPhoto[0].filename}`
+      : null;
 
     const newAlumni = await Alumni.create({
       alumniId: req.alumniId,
@@ -111,44 +75,20 @@ exports.register = async (req, res) => {
       email: email.toLowerCase(),
       password: hashedPassword,
       phone,
-      rollNumber,
       gender,
       occupation,
-
-      department,
-      programmeType,
-      degree,
+      stream,
       batchYear,
-      studyStartYear,
-      studyEndYear,
-
-      jobTitle,
-      currentCompany,
-      industry,
-      officeContact,
-      officeAddress,
-
-      social: {
-        linkedin,
-        twitter,
-        instagram,
-        facebook,
-        website,
-      },
-
       city,
       country,
       fullAddress,
-
       location: {
         type: "Point",
         coordinates,
       },
-
-      files,
-
+      currentPhoto,
       isApproved: false,
-      isAdmin: false,
+      role: "Alumni",
     });
 
     const token = generateToken({

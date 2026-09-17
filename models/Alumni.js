@@ -37,10 +37,7 @@ const AlumniSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    rollNumber: {
-      type: String,
-      trim: true,
-    },
+
     gender: {
       type: String,
       enum: ["Male", "Female", "Other"],
@@ -50,63 +47,13 @@ const AlumniSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // Education
-    department: {
-      type: String,
-      required: [true, "Department is required"],
-    },
-    programmeType: {
-      type: String,
-      trim: true,
-    },
-    degree: {
+    stream: {
       type: String,
       trim: true,
     },
     batchYear: {
       type: String,
       required: [true, "Batch year is required"],
-    },
-    studyStartYear: {
-      type: String,
-    },
-    studyEndYear: {
-      type: String,
-    },
-
-    // Employment
-    currentCompany: {
-      type: String,
-      trim: true,
-    },
-    jobTitle: {
-      type: String,
-      trim: true,
-    },
-    industry: {
-      type: String,
-      trim: true,
-    },
-    officeContact: {
-      type: String,
-      trim: true,
-    },
-    officeAddress: {
-      line1: String,
-      line2: String,
-      city: String,
-      state: String,
-      pincode: String,
-      country: String,
-    },
-
-    // Social Links
-    social: {
-      linkedin: String,
-      twitter: String,
-      instagram: String,
-      facebook: String,
-      website: String,
     },
 
     // Location Information (for Alumni Map)
@@ -125,46 +72,18 @@ const AlumniSchema = new mongoose.Schema(
       type: { type: String, enum: ["Point"], default: "Point" },
       coordinates: { type: [Number], required: true }, // [lng, lat]
     },
-
-    // Files Upload
-    files: {
-      businessCard: {
-        type: String,
-      },
-
-      idCard: {
-        type: String,
-      },
-
-      entrepreneurPoster: {
-        type: String,
-      },
-
-      studentPhoto: {
-        type: String,
-      },
-
-      currentPhoto: {
-        type: String,
-      },
-    },
-
     // Status
     isApproved: {
       type: Boolean,
       default: false, // New registrations pending approval
     },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
 
-    profileImage: { type: String },
+    currentPhoto: { type: String },
 
-    role : {
+    role: {
       type: String,
-      enum: ['Alumni', 'Faculty', 'Student', 'Admin'],
-      default: 'Alumni'
+      enum: ["Alumni", "Faculty", "Student", "Admin"],
+      default: "Alumni",
     },
 
     // Timestamps
@@ -184,7 +103,6 @@ const AlumniSchema = new mongoose.Schema(
 
 AlumniSchema.index({ location: "2dsphere" }); // Geospatial index for location
 AlumniSchema.index({ batchYear: 1 });
-AlumniSchema.index({ department: 1 });
 AlumniSchema.index({ isApproved: 1 }); // Index for filtering approved alumni
 
 module.exports = mongoose.model("Alumni", AlumniSchema);
