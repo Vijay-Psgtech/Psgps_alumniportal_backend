@@ -1,4 +1,5 @@
 // backend/controllers/alumniController.js
+const path = require("path");
 const Alumni = require("../models/Alumni");
 
 // @route   GET /api/alumni
@@ -111,10 +112,10 @@ exports.updateAlumniProfile = async (req, res) => {
       req.files.currentPhoto &&
       req.files.currentPhoto.length > 0
     ) {
-      updateData.currentPhoto = req.files.currentPhoto[0].path.replace(
-        /\\/g,
-        "/",
-      );
+      const uploadedPhoto = req.files.currentPhoto[0];
+      updateData.currentPhoto = `alumni/${req.alumniId}/${path.basename(
+        uploadedPhoto.path,
+      )}`;
     }
 
     // ── 4. Persist ─────────────────────────────────────────────────────────
