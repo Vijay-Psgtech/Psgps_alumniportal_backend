@@ -77,12 +77,6 @@ exports.updateAlumniProfile = async (req, res) => {
       "phone",
       "gender",
       "occupation",
-
-      "currentCompany",
-      "jobTitle",
-      "industry",
-      "officeContact",
-
       "country",
       "city",
       "fullAddress",
@@ -96,88 +90,8 @@ exports.updateAlumniProfile = async (req, res) => {
       }
     });
 
-    // ── 2. Nested: social links ────────────────────────────────────────────
-    // Frontend sends either a JSON string or dot-notation keys like "social.linkedin"
-    const socialFields = [
-      "linkedin",
-      "twitter",
-      "instagram",
-      "facebook",
-      "website",
-    ];
-    const socialUpdate = {};
 
-    if (req.body.social) {
-      // Sent as a serialized JSON string e.g. FormData.append("social", JSON.stringify({...}))
-      try {
-        const parsed =
-          typeof req.body.social === "string"
-            ? JSON.parse(req.body.social)
-            : req.body.social;
-        socialFields.forEach((key) => {
-          if (parsed[key] !== undefined) socialUpdate[key] = parsed[key];
-        });
-      } catch (_) {
-        // malformed JSON — skip silently
-      }
-    } else {
-      // Sent as dot-notation keys e.g. "social.linkedin"
-      socialFields.forEach((key) => {
-        const dotKey = `social.${key}`;
-        if (req.body[dotKey] !== undefined)
-          socialUpdate[key] = req.body[dotKey];
-      });
-    }
-
-    if (Object.keys(socialUpdate).length > 0) {
-      // Merge into existing social sub-document (don't wipe keys not sent)
-      socialFields.forEach((key) => {
-        if (socialUpdate[key] !== undefined) {
-          updateData[`social.${key}`] = socialUpdate[key];
-        }
-      });
-    }
-
-    // ── 3. Nested: office address ──────────────────────────────────────────
-    const officeAddressFields = [
-      "line1",
-      "line2",
-      "city",
-      "state",
-      "pincode",
-      "country",
-    ];
-    const officeUpdate = {};
-
-    if (req.body.officeAddress) {
-      try {
-        const parsed =
-          typeof req.body.officeAddress === "string"
-            ? JSON.parse(req.body.officeAddress)
-            : req.body.officeAddress;
-        officeAddressFields.forEach((key) => {
-          if (parsed[key] !== undefined) officeUpdate[key] = parsed[key];
-        });
-      } catch (_) {
-        // malformed JSON — skip silently
-      }
-    } else {
-      officeAddressFields.forEach((key) => {
-        const dotKey = `officeAddress.${key}`;
-        if (req.body[dotKey] !== undefined)
-          officeUpdate[key] = req.body[dotKey];
-      });
-    }
-
-    if (Object.keys(officeUpdate).length > 0) {
-      officeAddressFields.forEach((key) => {
-        if (officeUpdate[key] !== undefined) {
-          updateData[`officeAddress.${key}`] = officeUpdate[key];
-        }
-      });
-    }
-
-    // ── 4. Geo coordinates → location GeoJSON ─────────────────────────────
+    // ── 2. Geo coordinates → location GeoJSON ─────────────────────────────
     if (req.body.coordinates) {
       let coords = req.body.coordinates;
       // multer / express may give an array or a comma-separated string
@@ -191,43 +105,19 @@ exports.updateAlumniProfile = async (req, res) => {
       }
     }
 
-    // ── 5. Profile photo (single, field name: "profileImage") ─────────────
+    // ── 3. Profile photo (single, field name: "currentPhoto") ─────────────
     if (
       req.files &&
-      req.files.profileImage &&
-      req.files.profileImage.length > 0
+      req.files.currentPhoto &&
+      req.files.currentPhoto.length > 0
     ) {
-      updateData.profileImage = req.files.profileImage[0].path.replace(
+      updateData.currentPhoto = req.files.currentPhoto[0].path.replace(
         /\\/g,
         "/",
       );
     }
 
-    // ── 6. Document files (multiple, each under its own field name) ────────
-    // Expects multer fields: studentPhoto, currentPhoto, idCard,
-    //                        businessCard, entrepreneurPoster
-    const documentFields = [
-      "studentPhoto",
-      "currentPhoto",
-      "idCard",
-      "businessCard",
-      "entrepreneurPoster",
-    ];
-
-    if (req.files) {
-      const alumniFolderId = req.alumniId;
-      documentFields.forEach((field) => {
-        const uploaded = req.files[field];
-        if (uploaded && uploaded.length > 0) {
-          const filename = uploaded[0].filename;
-          updateData[`files.${field}`] = alumniFolderId
-            ? `alumni/${alumniFolderId}/${filename}`
-            : uploaded[0].path.replace(/\\/g, "/");
-        }
-      });
-    }
-
-    // ── 7. Persist ─────────────────────────────────────────────────────────
+    // ── 4. Persist ─────────────────────────────────────────────────────────
     const alumni = await Alumni.findByIdAndUpdate(
       req.params.id,
       { $set: updateData }, // $set so dot-notation merges nested fields safely
