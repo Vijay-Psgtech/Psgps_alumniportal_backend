@@ -8,7 +8,7 @@ exports.generateAlumniId = async (req, res, next) => {
       { new: true, upsert: true },
     );
 
-    const alumniId = `PSGCAS-ALU-${String(counter.seq).padStart(6, "0")}`;
+    const alumniId = `PSGPS-ALU-${String(counter.seq).padStart(6, "0")}`;
 
     req.alumniId = alumniId;
 
