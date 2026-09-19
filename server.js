@@ -8,8 +8,6 @@ const bcrypt = require("bcryptjs");
 const connectDB = require("./config/db");
 const User = require("./models/Users");
 
-
-
 const app = express();
 
 const allowedOrigins = [
@@ -33,7 +31,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 app.use(express.json());
@@ -41,7 +39,7 @@ app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 app.get("/api/health", (_req, res) =>
-  res.json({ message: "Server is running", status: "OK" })
+  res.json({ message: "Server is running", status: "OK" }),
 );
 
 app.use("/api/auth", require("./routes/auth"));
@@ -71,7 +69,9 @@ app.use((err, _req, res, _next) => {
 const PORT = process.env.PORT || 5000;
 
 const seedDefaultAdmin = async () => {
-  const adminEmail = (process.env.DEFAULT_ADMIN_EMAIL || "admin@psgps.edu.in").toLowerCase();
+  const adminEmail = (
+    process.env.DEFAULT_ADMIN_EMAIL || "admin@psgps.edu.in"
+  ).toLowerCase();
   const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD || "Admin@123";
 
   try {
