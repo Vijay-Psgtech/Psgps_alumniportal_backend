@@ -38,7 +38,7 @@ const UserSchema = new mongoose.Schema(
       default: "admin",
     },
 
-    department: {
+    stream: {
       type: String,
     },
 

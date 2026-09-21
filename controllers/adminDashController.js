@@ -11,7 +11,7 @@ exports.getAllAlumniForAdmin = async (req, res) => {
     if (status === "pending") filter.isApproved = false;
     else if (status === "approved") filter.isApproved = true;
     if (stream) filter.stream = stream;
-    if (batchYear) filter.batchYear = parseInt(batchYear);
+    if (batchYear) filter.batchYear = (batchYear);
     if (search) {
       filter.$or = [
         { firstName: { $regex: search, $options: "i" } },
