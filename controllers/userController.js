@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 // Create a new user (Admin)
 exports.createUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, role, department } = req.body;
+    const { firstName, lastName, email, password, role, stream } = req.body;
     // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
@@ -22,7 +22,7 @@ exports.createUser = async (req, res) => {
 
       password: hashedPassword,
       role,
-      department: role === "admin" ? department : undefined,
+      stream: role === "admin" ? stream : undefined,
     });
     await user.save();
 
@@ -49,7 +49,7 @@ exports.getUsers = async (req, res) => {
 // Update user (Admin)
 exports.updateUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, role, department } = req.body;
+    const { firstName, lastName, email, password, role, stream } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -62,7 +62,7 @@ exports.updateUser = async (req, res) => {
       user.password = await bcrypt.hash(password, salt);
     }
     user.role = role || user.role;
-    user.department = role === "admin" ? department : undefined;
+    user.stream = role === "admin" ? stream : undefined;
     await user.save();
     res.json({ message: "User updated successfully" });
   } catch (error) {
