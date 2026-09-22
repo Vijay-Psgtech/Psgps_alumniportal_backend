@@ -78,6 +78,7 @@ exports.updateAlumniProfile = async (req, res) => {
       "phone",
       "gender",
       "occupation",
+      "company",
       "country",
       "city",
       "fullAddress",
