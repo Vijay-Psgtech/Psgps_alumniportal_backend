@@ -5,19 +5,27 @@ const Event = require("../models/Events");
 // GET /api/admin/dashboard/alumni/all
 exports.getAllAlumniForAdmin = async (req, res) => {
   try {
-    const { status, search, stream, batchYear, sortBy } = req.query;
+    const {
+      status,
+      search,
+      stream,
+      batchYear,
+      sortBy,
+      page = 1,
+      limit = 20,
+    } = req.query;
 
-    let filter = {};
+    let filter = { role: "Alumni" };
     if (status === "pending") filter.isApproved = false;
     else if (status === "approved") filter.isApproved = true;
     if (stream) filter.stream = stream;
-    if (batchYear) filter.batchYear = (batchYear);
+    if (batchYear) filter.batchYear = batchYear === "null" ? null : batchYear;
     if (search) {
       filter.$or = [
         { firstName: { $regex: search, $options: "i" } },
         { lastName: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
-        { currentCompany: { $regex: search, $options: "   " } },
+        { jobTitle: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -25,15 +33,36 @@ exports.getAllAlumniForAdmin = async (req, res) => {
     if (sortBy === "name") sortOptions = { firstName: 1, lastName: 1 };
     else if (sortBy === "email") sortOptions = { email: 1 };
     else if (sortBy === "year") sortOptions = { batchYear: -1 };
-    console.log("Filter:", filter);
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
     const alumni = await Alumni.find(filter)
       .select("-password")
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalAlumni = await Alumni.countDocuments(filter);
+    const totalApproved = await Alumni.countDocuments({
+      ...filter,
+      isApproved: true,
+    });
+    const totalPending = await Alumni.countDocuments({
+      ...filter,
+      isApproved: false,
+    });
 
     res.json({
       message: "Alumni retrieved successfully",
       count: alumni.length,
       alumni,
+      totalAlumni,
+      totalApproved,
+      totalPending,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(
+        (await Alumni.countDocuments(filter)) / parseInt(limit),
+      ),
     });
   } catch (error) {
     console.error("Get All Alumni Error:", error);
