@@ -46,7 +46,10 @@ const AlumniSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-
+    company: {
+      type: String,
+      trim: true,
+    },
     stream: {
       type: String,
       trim: true,
