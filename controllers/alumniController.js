@@ -142,10 +142,10 @@ exports.updateAlumniProfile = async (req, res) => {
 // @access  Public
 exports.getMapData = async (req, res) => {
   try {
-    const { department } = req.query;
+    const { stream } = req.query;
     let filter = { isApproved: true, role: "Alumni" };
 
-    if (department) filter.department = department;
+    if (stream) filter.stream = stream;
 
     const alumni = await Alumni.find({
       ...filter,
