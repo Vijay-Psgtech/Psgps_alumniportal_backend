@@ -35,7 +35,7 @@ const storage = {
     const maxFileSize =
       file.mimetype === "application/pdf"
         ? 100 * 1024 * 1024 // 100MB
-        : 5 * 1024 * 1024; // 5MB
+        : 10 * 1024 * 1024; // 5MB
 
     let uploadedBytes = 0;
     let finished = false;
@@ -54,7 +54,7 @@ const storage = {
         err.message =
           file.mimetype === "application/pdf"
             ? "PDF file size must be under 100 MB"
-            : "File size must be under 5 MB";
+            : "File size must be under 10 MB";
 
         file.stream.unpipe(outStream);
         file.stream.destroy(err);
