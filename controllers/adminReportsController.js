@@ -80,3 +80,41 @@ exports.getAlumniByDepartment = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// Get Alumni count by Stream
+exports.getAlumniByStream = async (req, res) => {
+  try {
+    const countByStream = await Alumni.aggregate([
+      { $match: { role: "Alumni", batchYear: { $exists: true } } },
+      {
+        $project: {
+          stream: "$stream",
+        },
+      },
+      {
+        $group: {
+          _id: "$stream",
+          count: { $sum: 1 },
+        },
+      },
+      { 
+        $project: {
+          _id: 0,
+          stream: "$_id",
+          count: 1,
+        },
+      },
+      { $sort: { stream: 1 } },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        countByStream,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching alumni count by stream:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
