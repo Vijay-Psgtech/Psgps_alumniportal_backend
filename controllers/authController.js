@@ -15,7 +15,7 @@ const COOKIE_OPTIONS = {
   httpOnly: true, // JS cannot access
   secure: process.env.NODE_ENV === "production", // HTTPS only in prod
   sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (ms)
+  maxAge: 1 * 24 * 60 * 60 * 1000, // 1 days (ms)
 };
 
 // ─── Helper: generate JWT ────────────────────────────────────────
