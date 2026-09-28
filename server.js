@@ -14,8 +14,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5000",
-  "https://alumnitestpsgcas.psginstitutions.in",
-  "https://alumni.psgcas.ac.in",
+  "https://alumnitestpsgps.psginstitutions.in",
+  "https://alumni.psgps.ac.in",
   "https://www.alumni.psgcas.ac.in",
 ];
 
