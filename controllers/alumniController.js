@@ -251,6 +251,8 @@ exports.getAlumniBatchWise = async (req, res) => {
           lastName: 1,
           stream: 1,
           batchYear: 1,
+          classFrom: 1,
+          classTo: 1,
           company: 1,
           occupation: 1,
           currentPhoto: 1,
