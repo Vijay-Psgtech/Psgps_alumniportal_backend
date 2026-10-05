@@ -7,12 +7,12 @@ const Alumni = require("../models/Alumni");
 // @access  Public
 exports.getAllAlumni = async (req, res) => {
   try {
-    const { department, batchYear, country, city, search } = req.query;
+    const { stream, batchYear, country, city, search } = req.query;
     const totalCount = await Alumni.countDocuments();
     // Build filter
     let filter = { isApproved: true, role: "Alumni" };
 
-    if (department) filter.department = department;
+    if (stream) filter.stream = stream;
     if (batchYear) filter.batchYear = batchYear === "null" ? null : batchYear;
     if (country) filter.country = country;
     if (city) filter.city = city;
@@ -219,7 +219,7 @@ exports.getAlumniBatchWise = async (req, res) => {
       query.batchYear = batchYear === "null" ? null : batchYear;
     }
 
-    // Department filter
+    // Stream filter
     if (stream) {
       query.stream = stream;
     }
@@ -324,14 +324,14 @@ exports.getAlumniGroupedByBatch = async (req, res) => {
 
 exports.batches = async (req, res) => {
   try {
-    const { department } = req.query;
+    const { stream } = req.query;
 
     let filter = {
       role: "Alumni",
     };
 
-    if (department) {
-      filter.department = department;
+    if (stream) {
+      filter.stream = stream;
     }
 
     // Fetch valid batch years only
@@ -339,7 +339,7 @@ exports.batches = async (req, res) => {
       ...filter,
     });
 
-    // fetch field missing / null / empty as "Unknown" batch with count and departments represented in that batch
+    // fetch field missing / null / empty as "Unknown" batch with count and stream represented in that batch
     const unknownBatchCount = await Alumni.countDocuments({
       ...filter,
       $or: [
@@ -369,7 +369,7 @@ exports.batches = async (req, res) => {
             ],
           },
           count: { $sum: 1 },
-          departments: { $addToSet: "$department" },
+          streams: { $addToSet: "$stream" },
         },
       },
       {
@@ -395,7 +395,7 @@ exports.batches = async (req, res) => {
   }
 };
 
-// Get alumni totalcount, batchwise count, departmentwise count, etc. for stats page
+// Get alumni totalcount, batchwise count, streamwise count, etc. for stats page
 exports.getAlumniStats = async (req, res) => {
   try {
     const { stream } = req.query;
@@ -465,23 +465,23 @@ exports.getAlumniStats = async (req, res) => {
   }
 };
 
-// fetching distinct department & batch from alumni modal
+// fetching distinct stream & batch from alumni modal
 
 exports.getAlumniFilters  = async (req, res) => {
   try {
-    const [departments, batches] = await Promise.all([
-      Alumni.distinct("department"),
+    const [streams, batches] = await Promise.all([
+      Alumni.distinct("stream"),
       Alumni.distinct("batchYear"),
     ]);
 
     res.json({
-      departments: departments.filter(Boolean).sort(),
+      streams: streams.filter(Boolean).sort(),
       batches: batches
         .filter(Boolean)
         .sort((a, b) => String(b).localeCompare(String(a))),
     });
   } catch (err) {
-    console.error("Get Disinct Deaprtment & batch Error:", err);
+    console.error("Get Disinct Stream & batch Error:", err);
     res.status(500).json({ message: "Server error", err: err.message });
   }
 };
