@@ -35,7 +35,14 @@ const chapterSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["regional", "professional", "interest", "industry", "international", "batch"],
+      enum: [
+        "regional",
+        "professional",
+        "interest",
+        "industry",
+        "international",
+        "batch",
+      ],
       default: "regional",
     },
 
@@ -111,7 +118,7 @@ const chapterSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // auto manages createdAt + updatedAt — no need to define manually
-  }
+  },
 );
 
 // Auto-update memberCount before save

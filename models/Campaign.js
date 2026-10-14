@@ -61,7 +61,13 @@ const campaignSchema = new mongoose.Schema(
     coverImage: String,
     targetAudience: {
       type: [String],
-      enum: ["All Alumni", "Batch Wise", "Department Wise", "Faculty", "Ambassadors"],
+      enum: [
+        "All Alumni",
+        "Batch Wise",
+        "Department Wise",
+        "Faculty",
+        "Ambassadors",
+      ],
       default: ["All Alumni"],
     },
     specificBatches: [String],
@@ -74,7 +80,17 @@ const campaignSchema = new mongoose.Schema(
         fieldName: String,
         fieldType: {
           type: String,
-          enum: ["text", "textarea", "email", "phone", "select", "radio", "checkbox", "file", "date"],
+          enum: [
+            "text",
+            "textarea",
+            "email",
+            "phone",
+            "select",
+            "radio",
+            "checkbox",
+            "file",
+            "date",
+          ],
         },
         label: String,
         placeholder: String,
@@ -165,7 +181,7 @@ const campaignSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Campaign", campaignSchema);

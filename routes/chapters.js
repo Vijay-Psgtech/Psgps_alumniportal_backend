@@ -18,7 +18,11 @@ router.get("/my-chapters", protect, chapterController.getMyChapters);
 /* ─── ADMIN (static paths — MUST be before /:id) ─── */
 router.get("/admin/all", protect, chapterController.getAllChaptersAdmin);
 router.get("/admin/pending", protect, chapterController.getPendingChapters);
-router.get("/admin/status/:status", protect, chapterController.getChaptersByStatus);
+router.get(
+  "/admin/status/:status",
+  protect,
+  chapterController.getChaptersByStatus,
+);
 router.get("/admin/:id", protect, chapterController.getChapterDetailsAdmin);
 
 /* ─── DYNAMIC /:id routes LAST ─── */

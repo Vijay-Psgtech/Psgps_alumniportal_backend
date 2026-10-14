@@ -11,7 +11,9 @@ exports.createNotification = async (req, res) => {
     const { title, message, audienceType, targetBatch } = req.body;
 
     if (!title || !message) {
-      return res.status(400).json({ message: "Title and message are required" });
+      return res
+        .status(400)
+        .json({ message: "Title and message are required" });
     }
 
     if (!["all", "batch"].includes(audienceType)) {
@@ -19,10 +21,14 @@ exports.createNotification = async (req, res) => {
     }
 
     if (audienceType === "batch" && !targetBatch) {
-      return res.status(400).json({ message: "targetBatch is required for batch notifications" });
+      return res
+        .status(400)
+        .json({ message: "targetBatch is required for batch notifications" });
     }
 
-    const sender = await Alumni.findById(req.user.id).select("firstName lastName email");
+    const sender = await Alumni.findById(req.user.id).select(
+      "firstName lastName email",
+    );
     if (!sender) return res.status(404).json({ message: "Sender not found" });
 
     // Build attachment object if a file was uploaded
@@ -78,7 +84,9 @@ exports.getMyNotifications = async (req, res) => {
       ],
     };
 
-    const notifications = await Notification.find(query).sort({ approvedAt: -1 });
+    const notifications = await Notification.find(query).sort({
+      approvedAt: -1,
+    });
 
     res.json({
       message: "Notifications retrieved",
@@ -96,8 +104,14 @@ exports.getMyNotifications = async (req, res) => {
 ───────────────────────────────────────────────────────────────── */
 exports.getMySubmissions = async (req, res) => {
   try {
-    const notifications = await Notification.find({ senderId: req.user.id }).sort({ createdAt: -1 });
-    res.json({ message: "Your submissions", count: notifications.length, notifications });
+    const notifications = await Notification.find({
+      senderId: req.user.id,
+    }).sort({ createdAt: -1 });
+    res.json({
+      message: "Your submissions",
+      count: notifications.length,
+      notifications,
+    });
   } catch (err) {
     console.error("getMySubmissions error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
@@ -111,8 +125,14 @@ exports.adminGetAll = async (req, res) => {
   try {
     const { status } = req.query;
     const filter = status ? { status } : {};
-    const notifications = await Notification.find(filter).sort({ createdAt: -1 });
-    res.json({ message: "All notifications", count: notifications.length, notifications });
+    const notifications = await Notification.find(filter).sort({
+      createdAt: -1,
+    });
+    res.json({
+      message: "All notifications",
+      count: notifications.length,
+      notifications,
+    });
   } catch (err) {
     console.error("adminGetAll error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
@@ -132,10 +152,11 @@ exports.adminApprove = async (req, res) => {
         approvedBy: req.user.id,
         adminNote: req.body.adminNote || "",
       },
-      { new: true }
+      { new: true },
     );
 
-    if (!notification) return res.status(404).json({ message: "Notification not found" });
+    if (!notification)
+      return res.status(404).json({ message: "Notification not found" });
 
     res.json({ message: "Notification approved", notification });
   } catch (err) {
@@ -156,10 +177,11 @@ exports.adminReject = async (req, res) => {
         adminNote: req.body.reason || "Rejected by admin",
         approvedBy: req.user.id,
       },
-      { new: true }
+      { new: true },
     );
 
-    if (!notification) return res.status(404).json({ message: "Notification not found" });
+    if (!notification)
+      return res.status(404).json({ message: "Notification not found" });
 
     res.json({ message: "Notification rejected", notification });
   } catch (err) {
@@ -174,7 +196,8 @@ exports.adminReject = async (req, res) => {
 exports.adminDelete = async (req, res) => {
   try {
     const notification = await Notification.findByIdAndDelete(req.params.id);
-    if (!notification) return res.status(404).json({ message: "Notification not found" });
+    if (!notification)
+      return res.status(404).json({ message: "Notification not found" });
     res.json({ message: "Notification deleted" });
   } catch (err) {
     console.error("adminDelete error:", err);

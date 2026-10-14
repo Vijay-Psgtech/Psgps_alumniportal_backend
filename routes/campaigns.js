@@ -70,7 +70,7 @@ router.put("/response/:responseId/status", async (req, res) => {
         adminRating,
         updatedAt: new Date(),
       },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!response) {
@@ -125,7 +125,7 @@ router.post("/response/:responseId/publish", async (req, res) => {
         publishedTitle: title,
         publishedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!response) {
@@ -179,9 +179,12 @@ router.delete("/response/:responseId", async (req, res) => {
     if (response.campaignId) {
       const campaign = await Campaign.findById(response.campaignId);
       if (campaign) {
-        campaign.totalResponses = Math.max(0, (campaign.totalResponses || 0) - 1);
+        campaign.totalResponses = Math.max(
+          0,
+          (campaign.totalResponses || 0) - 1,
+        );
         campaign.responses = (campaign.responses || []).filter(
-          (id) => id.toString() !== response._id.toString()
+          (id) => id.toString() !== response._id.toString(),
         );
         await campaign.save();
       }
@@ -297,9 +300,9 @@ router.get("/:id/responses/export", async (req, res) => {
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="campaign-responses-${id}-${new Date()
-        .toISOString()
-        .split("T")[0]}.csv"`
+      `attachment; filename="campaign-responses-${id}-${
+        new Date().toISOString().split("T")[0]
+      }.csv"`,
     );
     res.send(csv);
 
@@ -576,7 +579,9 @@ router.post("/", async (req, res) => {
       description: description.trim(),
       category,
       startDate: startDate || new Date(),
-      endDate: endDate || new Date(Date.now() + (duration || 14) * 24 * 60 * 60 * 1000),
+      endDate:
+        endDate ||
+        new Date(Date.now() + (duration || 14) * 24 * 60 * 60 * 1000),
       duration: duration || 14,
       formFields: formFields || [],
       status: "Draft",
@@ -590,9 +595,12 @@ router.post("/", async (req, res) => {
     if (coverImage) campaignData.coverImage = coverImage;
     if (targetAudience) campaignData.targetAudience = targetAudience;
     if (specificBatches) campaignData.specificBatches = specificBatches;
-    if (specificDepartments) campaignData.specificDepartments = specificDepartments;
-    if (allowPublishing !== undefined) campaignData.allowPublishing = allowPublishing;
-    if (sendNotifications !== undefined) campaignData.sendNotifications = sendNotifications;
+    if (specificDepartments)
+      campaignData.specificDepartments = specificDepartments;
+    if (allowPublishing !== undefined)
+      campaignData.allowPublishing = allowPublishing;
+    if (sendNotifications !== undefined)
+      campaignData.sendNotifications = sendNotifications;
     if (tags) campaignData.tags = tags;
 
     const campaign = await Campaign.create(campaignData);
@@ -673,7 +681,7 @@ router.put("/:id", async (req, res) => {
         updatedBy: req.body.updatedBy || new mongoose.Types.ObjectId(),
         updatedAt: new Date(),
       },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!campaign) {

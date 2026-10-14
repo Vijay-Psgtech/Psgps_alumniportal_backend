@@ -153,7 +153,7 @@ exports.getAllDonations = async (req, res) => {
       count: donations.length,
       summary,
       donations,
-    }); 
+    });
   } catch (error) {
     console.error("Get Donations Error:", error);
     res.status(500).json({ message: "Server error", error: error.message });

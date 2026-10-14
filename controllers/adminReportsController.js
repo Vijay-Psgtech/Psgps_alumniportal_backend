@@ -3,9 +3,12 @@ const Event = require("../models/Events");
 
 exports.getAlumniByYear = async (req, res) => {
   try {
-    const totalCount = await Alumni.countDocuments({ role: "Alumni", batchYear: { $exists: true } });
+    const totalCount = await Alumni.countDocuments({
+      role: "Alumni",
+      batchYear: { $exists: true },
+    });
     const countByYear = await Alumni.aggregate([
-      { $match: { role: "Alumni", batchYear: { $exists: true } }},
+      { $match: { role: "Alumni", batchYear: { $exists: true } } },
       {
         $project: {
           year: "$batchYear",
@@ -27,7 +30,12 @@ exports.getAlumniByYear = async (req, res) => {
       { $sort: { year: 1 } },
     ]);
 
-    const allAlumni = await Alumni.find({ role: "Alumni", batchYear: { $exists: true } }).sort({ createdAt: -1 }).limit(10);
+    const allAlumni = await Alumni.find({
+      role: "Alumni",
+      batchYear: { $exists: true },
+    })
+      .sort({ createdAt: -1 })
+      .limit(10);
 
     res.status(200).json({
       success: true,
@@ -42,7 +50,6 @@ exports.getAlumniByYear = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 // Get Alumni count by Stream
 exports.getAlumniByStream = async (req, res) => {
@@ -60,7 +67,7 @@ exports.getAlumniByStream = async (req, res) => {
           count: { $sum: 1 },
         },
       },
-      { 
+      {
         $project: {
           _id: 0,
           stream: "$_id",
@@ -80,4 +87,4 @@ exports.getAlumniByStream = async (req, res) => {
     console.error("Error fetching alumni count by stream:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
-}
+};

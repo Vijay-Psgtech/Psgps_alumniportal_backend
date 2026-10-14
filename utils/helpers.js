@@ -15,7 +15,7 @@ exports.calculateMetrics = (metrics) => {
 
   const clickThroughRate = impressions > 0 ? (clicks / impressions) * 100 : 0;
   const conversionRate = clicks > 0 ? (conversions / clicks) * 100 : 0;
-  const roi = conversions > 0 ? ((conversions / impressions) * 100) : 0;
+  const roi = conversions > 0 ? (conversions / impressions) * 100 : 0;
 
   return {
     ...metrics,
@@ -33,42 +33,50 @@ exports.calculateMetrics = (metrics) => {
 exports.validateCampaignData = (data) => {
   const errors = [];
 
-  if (!data.title || data.title.trim() === '') {
-    errors.push('Campaign title is required');
+  if (!data.title || data.title.trim() === "") {
+    errors.push("Campaign title is required");
   }
 
-  if (!data.description || data.description.trim() === '') {
-    errors.push('Campaign description is required');
+  if (!data.description || data.description.trim() === "") {
+    errors.push("Campaign description is required");
   }
 
   if (!data.budget || data.budget < 0) {
-    errors.push('Campaign budget must be a positive number');
+    errors.push("Campaign budget must be a positive number");
   }
 
   if (!data.startDate) {
-    errors.push('Start date is required');
+    errors.push("Start date is required");
   }
 
   if (!data.endDate) {
-    errors.push('End date is required');
+    errors.push("End date is required");
   }
 
   if (new Date(data.startDate) > new Date(data.endDate)) {
-    errors.push('End date must be after start date');
+    errors.push("End date must be after start date");
   }
 
-  if (!data.targetAudience || data.targetAudience.trim() === '') {
-    errors.push('Target audience is required');
+  if (!data.targetAudience || data.targetAudience.trim() === "") {
+    errors.push("Target audience is required");
   }
 
-  const validTypes = ['social_media', 'email', 'content', 'paid_ads', 'influencer', 'event', 'other'];
+  const validTypes = [
+    "social_media",
+    "email",
+    "content",
+    "paid_ads",
+    "influencer",
+    "event",
+    "other",
+  ];
   if (data.type && !validTypes.includes(data.type)) {
-    errors.push('Invalid campaign type');
+    errors.push("Invalid campaign type");
   }
 
-  const validStatuses = ['draft', 'scheduled', 'active', 'paused', 'completed'];
+  const validStatuses = ["draft", "scheduled", "active", "paused", "completed"];
   if (data.status && !validStatuses.includes(data.status)) {
-    errors.push('Invalid campaign status');
+    errors.push("Invalid campaign status");
   }
 
   return {
@@ -83,23 +91,23 @@ exports.validateCampaignData = (data) => {
  * @param {String} format - Format option: 'short' or 'long'
  * @returns {String} Formatted date
  */
-exports.formatDate = (date, format = 'short') => {
+exports.formatDate = (date, format = "short") => {
   const dateObj = new Date(date);
-  
-  if (format === 'short') {
-    return dateObj.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+
+  if (format === "short") {
+    return dateObj.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   }
-  
-  return dateObj.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+
+  return dateObj.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
@@ -142,7 +150,7 @@ exports.calculateProgress = (startDate, endDate) => {
  * @returns {String} Campaign status
  */
 exports.getCampaignStatus = (manualStatus, startDate, endDate) => {
-  if (manualStatus && manualStatus !== 'draft') {
+  if (manualStatus && manualStatus !== "draft") {
     return manualStatus;
   }
 
@@ -151,11 +159,11 @@ exports.getCampaignStatus = (manualStatus, startDate, endDate) => {
   const end = new Date(endDate);
 
   if (now < start) {
-    return 'scheduled';
+    return "scheduled";
   } else if (now >= start && now <= end) {
-    return 'active';
+    return "active";
   } else {
-    return 'completed';
+    return "completed";
   }
 };
 
@@ -165,9 +173,9 @@ exports.getCampaignStatus = (manualStatus, startDate, endDate) => {
  * @param {String} currency - Currency code (default: USD)
  * @returns {String} Formatted currency string
  */
-exports.formatCurrency = (value, currency = 'USD') => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
+exports.formatCurrency = (value, currency = "USD") => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency: currency,
   }).format(value);
 };
@@ -200,7 +208,7 @@ exports.generateCampaignSummary = (campaign) => {
       roi: `${metrics.roi}%`,
     },
     channels: campaign.channels || [],
-    teamLead: campaign.team || 'Unassigned',
+    teamLead: campaign.team || "Unassigned",
   };
 };
 
@@ -208,10 +216,10 @@ exports.generateCampaignSummary = (campaign) => {
  * Error handler middleware
  */
 exports.errorHandler = (err, req, res, next) => {
-  console.error('Error:', err);
+  console.error("Error:", err);
 
   const status = err.status || 500;
-  const message = err.message || 'Internal Server Error';
+  const message = err.message || "Internal Server Error";
 
   res.status(status).json({
     success: false,
@@ -226,7 +234,7 @@ exports.errorHandler = (err, req, res, next) => {
 /**
  * Success response formatter
  */
-exports.successResponse = (data, message = 'Success', statusCode = 200) => {
+exports.successResponse = (data, message = "Success", statusCode = 200) => {
   return {
     success: true,
     statusCode,

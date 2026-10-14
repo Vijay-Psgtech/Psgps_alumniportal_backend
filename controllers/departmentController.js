@@ -120,7 +120,7 @@ exports.createDepartment = async (req, res) => {
       programmeType,
       fundingType,
       description: description?.trim() || "",
-      createdBy: req.user._id,  // ✅ FIX: Uses _id
+      createdBy: req.user._id, // ✅ FIX: Uses _id
     });
 
     console.log("💾 Saving department:", {

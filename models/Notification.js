@@ -20,7 +20,7 @@ const NotificationSchema = new mongoose.Schema(
     attachment: {
       filename: { type: String },
       originalName: { type: String },
-      mimetype: { type: String },      // 'application/pdf' | 'image/...'
+      mimetype: { type: String }, // 'application/pdf' | 'image/...'
       path: { type: String },
       size: { type: Number },
     },
@@ -28,11 +28,11 @@ const NotificationSchema = new mongoose.Schema(
     // Audience
     audienceType: {
       type: String,
-      enum: ["all", "batch"],          // "all" = entire alumni | "batch" = specific batch
+      enum: ["all", "batch"], // "all" = entire alumni | "batch" = specific batch
       default: "all",
     },
     targetBatch: {
-      type: String,                    // e.g. "2020-2024", populated when audienceType === "batch"
+      type: String, // e.g. "2020-2024", populated when audienceType === "batch"
       default: null,
     },
 
@@ -42,14 +42,14 @@ const NotificationSchema = new mongoose.Schema(
       enum: ["pending", "approved", "rejected"],
       default: "pending",
     },
-    adminNote: { type: String, default: "" },   // rejection reason etc.
+    adminNote: { type: String, default: "" }, // rejection reason etc.
     approvedAt: { type: Date },
     approvedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Alumni",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 NotificationSchema.index({ status: 1 });
