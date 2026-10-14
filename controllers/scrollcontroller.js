@@ -25,7 +25,13 @@ exports.getActiveNotifications = async (req, res) => {
 // ============ Get all notifications (admin) ============
 exports.getAllNotifications = async (req, res) => {
   try {
-    const { page = 1, limit = 10, sort = "-createdAt", type, isActive } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      sort = "-createdAt",
+      type,
+      isActive,
+    } = req.query;
 
     const filter = {};
     if (type) filter.type = type;
@@ -74,7 +80,9 @@ exports.createNotification = async (req, res) => {
     const { title, message, type, displayOrder, expiresAt } = req.body;
 
     if (!message) {
-      return res.status(400).json({ success: false, message: "Message required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Message required" });
     }
 
     const notification = await Notification.create({
@@ -138,7 +146,7 @@ exports.activateNotification = async (req, res) => {
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
       { isActive: true },
-      { new: true }
+      { new: true },
     );
 
     res.status(200).json({ success: true, data: notification });
@@ -153,7 +161,7 @@ exports.deactivateNotification = async (req, res) => {
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
       { isActive: false },
-      { new: true }
+      { new: true },
     );
 
     res.status(200).json({ success: true, data: notification });

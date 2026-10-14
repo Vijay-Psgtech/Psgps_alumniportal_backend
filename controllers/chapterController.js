@@ -72,7 +72,9 @@ exports.getChapters = async (req, res) => {
       const userChapters = await Chapter.find({
         status: "approved",
         members: req.user._id,
-      }).select("_id").lean();
+      })
+        .select("_id")
+        .lean();
       userChapterIds = userChapters.map((ch) => ch._id.toString());
     }
 
@@ -102,13 +104,21 @@ exports.getChapterById = async (req, res) => {
     const { id } = req.params;
 
     const chapter = await Chapter.findById(id)
-      .populate("foundedBy", "firstName lastName profileImage email department graduationYear")
-      .populate("members", "firstName lastName profileImage email department graduationYear")
+      .populate(
+        "foundedBy",
+        "firstName lastName profileImage email department graduationYear",
+      )
+      .populate(
+        "members",
+        "firstName lastName profileImage email department graduationYear",
+      )
       .populate("approvedBy", "firstName lastName email")
       .lean();
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     // ✅ Safe check — foundedBy may be null for dummy data
@@ -120,7 +130,9 @@ exports.getChapterById = async (req, res) => {
       const isAdmin = req.user?.isAdmin;
 
       if (!isOwner && !isAdmin) {
-        return res.status(403).json({ success: false, message: "Access denied" });
+        return res
+          .status(403)
+          .json({ success: false, message: "Access denied" });
       }
     }
 
@@ -145,13 +157,19 @@ exports.getChaptersByCategory = async (req, res) => {
 
     const chapters = await Chapter.find({ status: "approved", category })
       .select("-members")
-      .populate({ path: "foundedBy", select: "firstName lastName profileImage" })
+      .populate({
+        path: "foundedBy",
+        select: "firstName lastName profileImage",
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit))
       .lean();
 
-    const total = await Chapter.countDocuments({ status: "approved", category });
+    const total = await Chapter.countDocuments({
+      status: "approved",
+      category,
+    });
 
     res.json({
       success: true,
@@ -176,14 +194,19 @@ exports.getChaptersByCategory = async (req, res) => {
 exports.getMyChapters = async (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Not authenticated" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authenticated" });
     }
 
     const chapters = await Chapter.find({
       status: "approved",
       members: req.user._id,
     })
-      .populate({ path: "foundedBy", select: "firstName lastName profileImage" })
+      .populate({
+        path: "foundedBy",
+        select: "firstName lastName profileImage",
+      })
       .populate({ path: "members", select: "firstName lastName profileImage" })
       .sort({ createdAt: -1 })
       .lean();
@@ -203,7 +226,9 @@ exports.getMyChapters = async (req, res) => {
 exports.createChapter = async (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Not authenticated" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authenticated" });
     }
 
     const { title, description, content, location, category, tags } = req.body;
@@ -255,7 +280,9 @@ exports.createChapter = async (req, res) => {
 exports.updateChapter = async (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Not authenticated" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authenticated" });
     }
 
     const { id } = req.params;
@@ -264,7 +291,9 @@ exports.updateChapter = async (req, res) => {
     const chapter = await Chapter.findById(id);
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     if (chapter.foundedBy?.toString() !== req.user._id.toString()) {
@@ -286,7 +315,11 @@ exports.updateChapter = async (req, res) => {
     await chapter.save();
     await chapter.populate("foundedBy", "firstName lastName profileImage");
 
-    res.json({ success: true, message: "Chapter updated successfully!", chapter });
+    res.json({
+      success: true,
+      message: "Chapter updated successfully!",
+      chapter,
+    });
   } catch (error) {
     console.error("❌ Error updating chapter:", error);
     res.status(500).json({
@@ -301,14 +334,18 @@ exports.updateChapter = async (req, res) => {
 exports.deleteChapter = async (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Not authenticated" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authenticated" });
     }
 
     const { id } = req.params;
     const chapter = await Chapter.findById(id);
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     if (chapter.foundedBy?.toString() !== req.user._id.toString()) {
@@ -332,26 +369,34 @@ exports.deleteChapter = async (req, res) => {
 exports.joinChapter = async (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Not authenticated" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authenticated" });
     }
 
     const { id } = req.params;
     const chapter = await Chapter.findById(id);
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     if (chapter.status !== "approved") {
-      return res.status(403).json({ success: false, message: "Cannot join unapproved chapters" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Cannot join unapproved chapters" });
     }
 
     const isMember = chapter.members.some(
-      (m) => m.toString() === req.user._id.toString()
+      (m) => m.toString() === req.user._id.toString(),
     );
 
     if (isMember) {
-      return res.status(400).json({ success: false, message: "Already a member of this chapter" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Already a member of this chapter" });
     }
 
     // ✅ Use findByIdAndUpdate to avoid pre-save hook
@@ -361,13 +406,23 @@ exports.joinChapter = async (req, res) => {
         $push: { members: req.user._id },
         $inc: { memberCount: 1 },
       },
-      { new: true }
+      { new: true },
     );
 
-    res.json({ success: true, message: "Joined chapter successfully!", chapter: updated });
+    res.json({
+      success: true,
+      message: "Joined chapter successfully!",
+      chapter: updated,
+    });
   } catch (error) {
     console.error("❌ Error joining chapter:", error);
-    res.status(500).json({ success: false, message: "Failed to join chapter", error: error.message });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Failed to join chapter",
+        error: error.message,
+      });
   }
 };
 
@@ -375,22 +430,31 @@ exports.joinChapter = async (req, res) => {
 exports.leaveChapter = async (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Not authenticated" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authenticated" });
     }
 
     const { id } = req.params;
     const chapter = await Chapter.findById(id);
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     const isMember = chapter.members.some(
-      (m) => m.toString() === req.user._id.toString()
+      (m) => m.toString() === req.user._id.toString(),
     );
 
     if (!isMember) {
-      return res.status(400).json({ success: false, message: "You are not a member of this chapter" });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "You are not a member of this chapter",
+        });
     }
 
     // ✅ Use findByIdAndUpdate to avoid pre-save hook
@@ -400,13 +464,23 @@ exports.leaveChapter = async (req, res) => {
         $pull: { members: req.user._id },
         $inc: { memberCount: -1 },
       },
-      { new: true }
+      { new: true },
     );
 
-    res.json({ success: true, message: "Left chapter successfully!", chapter: updated });
+    res.json({
+      success: true,
+      message: "Left chapter successfully!",
+      chapter: updated,
+    });
   } catch (error) {
     console.error("❌ Error leaving chapter:", error);
-    res.status(500).json({ success: false, message: "Failed to leave chapter", error: error.message });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Failed to leave chapter",
+        error: error.message,
+      });
   }
 };
 
@@ -418,12 +492,14 @@ exports.getChapterMembers = async (req, res) => {
     const chapter = await Chapter.findById(id)
       .populate(
         "members",
-        "firstName lastName profileImage email department graduationYear"
+        "firstName lastName profileImage email department graduationYear",
       )
       .lean();
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     res.json({
@@ -449,7 +525,9 @@ exports.getChapterMembers = async (req, res) => {
 exports.getAllChaptersAdmin = async (req, res) => {
   try {
     if (!req.user?.isAdmin) {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
     const { status, search, page = 1, limit = 10 } = req.query;
@@ -469,7 +547,10 @@ exports.getAllChaptersAdmin = async (req, res) => {
 
     const chapters = await Chapter.find(query)
       .select("-members")
-      .populate({ path: "foundedBy", select: "firstName lastName email profileImage" })
+      .populate({
+        path: "foundedBy",
+        select: "firstName lastName email profileImage",
+      })
       .populate({ path: "approvedBy", select: "firstName lastName email" })
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -512,11 +593,16 @@ exports.getAllChaptersAdmin = async (req, res) => {
 exports.getPendingChapters = async (req, res) => {
   try {
     if (!req.user?.isAdmin) {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
     const chapters = await Chapter.find({ status: "pending" })
-      .populate({ path: "foundedBy", select: "firstName lastName email profileImage department" })
+      .populate({
+        path: "foundedBy",
+        select: "firstName lastName email profileImage department",
+      })
       .sort({ createdAt: -1 })
       .lean();
 
@@ -526,7 +612,7 @@ exports.getPendingChapters = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch pending chapters",
-      error: error.message,            
+      error: error.message,
     });
   }
 };
@@ -535,7 +621,9 @@ exports.getPendingChapters = async (req, res) => {
 exports.getChaptersByStatus = async (req, res) => {
   try {
     if (!req.user?.isAdmin) {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
     const { status } = req.params;
@@ -551,7 +639,10 @@ exports.getChaptersByStatus = async (req, res) => {
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const chapters = await Chapter.find({ status })
-      .populate({ path: "foundedBy", select: "firstName lastName email profileImage" })
+      .populate({
+        path: "foundedBy",
+        select: "firstName lastName email profileImage",
+      })
       .populate({ path: "approvedBy", select: "firstName lastName email" })
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -583,19 +674,26 @@ exports.getChaptersByStatus = async (req, res) => {
 exports.getChapterDetailsAdmin = async (req, res) => {
   try {
     if (!req.user?.isAdmin) {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
     const { id } = req.params;
 
     const chapter = await Chapter.findById(id)
-      .populate("foundedBy", "firstName lastName email profileImage department graduationYear")
+      .populate(
+        "foundedBy",
+        "firstName lastName email profileImage department graduationYear",
+      )
       .populate("members", "firstName lastName profileImage email department")
       .populate("approvedBy", "firstName lastName email")
       .lean();
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     res.json({ success: true, chapter });
@@ -613,14 +711,18 @@ exports.getChapterDetailsAdmin = async (req, res) => {
 exports.approveChapter = async (req, res) => {
   try {
     if (!req.user?.isAdmin) {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
     const { id } = req.params;
     const chapter = await Chapter.findById(id);
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     if (chapter.status !== "pending") {
@@ -636,7 +738,11 @@ exports.approveChapter = async (req, res) => {
 
     await chapter.save();
 
-    res.json({ success: true, message: "Chapter approved successfully!", chapter });
+    res.json({
+      success: true,
+      message: "Chapter approved successfully!",
+      chapter,
+    });
   } catch (error) {
     console.error("❌ Error approving chapter:", error);
     res.status(500).json({
@@ -651,7 +757,9 @@ exports.approveChapter = async (req, res) => {
 exports.rejectChapter = async (req, res) => {
   try {
     if (!req.user?.isAdmin) {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
     const { id } = req.params;
@@ -667,7 +775,9 @@ exports.rejectChapter = async (req, res) => {
     const chapter = await Chapter.findById(id);
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     if (chapter.status !== "pending") {
@@ -684,7 +794,11 @@ exports.rejectChapter = async (req, res) => {
 
     await chapter.save();
 
-    res.json({ success: true, message: "Chapter rejected successfully!", chapter });
+    res.json({
+      success: true,
+      message: "Chapter rejected successfully!",
+      chapter,
+    });
   } catch (error) {
     console.error("❌ Error rejecting chapter:", error);
     res.status(500).json({
@@ -699,20 +813,28 @@ exports.rejectChapter = async (req, res) => {
 exports.suspendChapter = async (req, res) => {
   try {
     if (!req.user?.isAdmin) {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
     const { id } = req.params;
     const chapter = await Chapter.findById(id);
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     chapter.isSuspended = true;
     await chapter.save();
 
-    res.json({ success: true, message: "Chapter suspended successfully!", chapter });
+    res.json({
+      success: true,
+      message: "Chapter suspended successfully!",
+      chapter,
+    });
   } catch (error) {
     console.error("❌ Error suspending chapter:", error);
     res.status(500).json({
@@ -727,19 +849,26 @@ exports.suspendChapter = async (req, res) => {
 exports.deleteChapterAsAdmin = async (req, res) => {
   try {
     if (!req.user?.isAdmin) {
-      return res.status(403).json({ success: false, message: "Admin access required" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Admin access required" });
     }
 
     const { id } = req.params;
     const chapter = await Chapter.findById(id);
 
     if (!chapter) {
-      return res.status(404).json({ success: false, message: "Chapter not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Chapter not found" });
     }
 
     await Chapter.findByIdAndDelete(id);
 
-    res.json({ success: true, message: "Chapter deleted by admin successfully!" });
+    res.json({
+      success: true,
+      message: "Chapter deleted by admin successfully!",
+    });
   } catch (error) {
     console.error("❌ Error deleting chapter as admin:", error);
     res.status(500).json({

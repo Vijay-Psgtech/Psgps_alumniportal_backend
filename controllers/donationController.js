@@ -27,7 +27,8 @@ exports.createDonations = async (req, res) => {
     if (!donorName || !amount || !currency || !paymentMethod) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: donorName, amount, currency, paymentMethod",
+        message:
+          "Missing required fields: donorName, amount, currency, paymentMethod",
       });
     }
 
@@ -81,7 +82,8 @@ exports.createDonations = async (req, res) => {
 // ═════════════════════════════════════════════════════════════════════════
 exports.verifyRazorPay = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({
@@ -91,7 +93,10 @@ exports.verifyRazorPay = async (req, res) => {
     }
 
     // Verify signature (you'll need your Razorpay key secret)
-    const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "");
+    const hmac = crypto.createHmac(
+      "sha256",
+      process.env.RAZORPAY_KEY_SECRET || "",
+    );
     hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
     const generated_signature = hmac.digest("hex");
 
@@ -110,7 +115,7 @@ exports.verifyRazorPay = async (req, res) => {
         transactionId: razorpay_payment_id,
         completedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!donation) {
@@ -142,7 +147,9 @@ exports.verifyRazorPay = async (req, res) => {
 // ═════════════════════════════════════════════════════════════════════════
 exports.getAllDonations = async (req, res) => {
   try {
-    const donations = await Donation.find().populate("alumniId").sort({ createdAt: -1 });
+    const donations = await Donation.find()
+      .populate("alumniId")
+      .sort({ createdAt: -1 });
 
     const stats = {
       total: donations.length,
@@ -151,7 +158,13 @@ exports.getAllDonations = async (req, res) => {
       failed: donations.filter((d) => d.status === "failed").length,
       cancelled: donations.filter((d) => d.status === "cancelled").length,
       totalAmount: donations.reduce((sum, d) => sum + d.amount, 0),
-      averageAmount: donations.length > 0 ? Math.round(donations.reduce((sum, d) => sum + d.amount, 0) / donations.length) : 0,
+      averageAmount:
+        donations.length > 0
+          ? Math.round(
+              donations.reduce((sum, d) => sum + d.amount, 0) /
+                donations.length,
+            )
+          : 0,
     };
 
     console.log("✅ Fetched all donations");
@@ -271,7 +284,13 @@ exports.getDonationHistory = async (req, res) => {
       cancelled: allDonations.filter((d) => d.status === "cancelled").length,
       flagged: allDonations.filter((d) => d.adminFlagged).length,
       totalAmount: allDonations.reduce((sum, d) => sum + d.amount, 0),
-      averageAmount: allDonations.length > 0 ? Math.round(allDonations.reduce((sum, d) => sum + d.amount, 0) / allDonations.length) : 0,
+      averageAmount:
+        allDonations.length > 0
+          ? Math.round(
+              allDonations.reduce((sum, d) => sum + d.amount, 0) /
+                allDonations.length,
+            )
+          : 0,
     };
 
     console.log(`✅ Fetched donation history - Page ${page}, Total: ${total}`);
@@ -312,13 +331,22 @@ exports.getDonationStats = async (req, res) => {
       cancelled: donations.filter((d) => d.status === "cancelled").length,
       flagged: donations.filter((d) => d.adminFlagged).length,
       totalAmount: donations.reduce((sum, d) => sum + d.amount, 0),
-      averageAmount: donations.length > 0 ? Math.round(donations.reduce((sum, d) => sum + d.amount, 0) / donations.length) : 0,
+      averageAmount:
+        donations.length > 0
+          ? Math.round(
+              donations.reduce((sum, d) => sum + d.amount, 0) /
+                donations.length,
+            )
+          : 0,
       byPaymentMethod: {
         upi: donations.filter((d) => d.paymentMethod === "UPI").length,
-        netbanking: donations.filter((d) => d.paymentMethod === "Net Banking").length,
+        netbanking: donations.filter((d) => d.paymentMethod === "Net Banking")
+          .length,
         card: donations.filter((d) => d.paymentMethod === "Card").length,
         cheque: donations.filter((d) => d.paymentMethod === "Cheque").length,
-        wiretransfer: donations.filter((d) => d.paymentMethod === "Wire Transfer").length,
+        wiretransfer: donations.filter(
+          (d) => d.paymentMethod === "Wire Transfer",
+        ).length,
       },
       byCurrency: {
         inr: donations.filter((d) => d.currency === "INR").length,
@@ -386,10 +414,16 @@ exports.updateDonation = async (req, res) => {
       id,
       {
         ...(adminNote !== undefined && { adminNote }),
-        ...(status !== undefined && { status, completedAt: status === "completed" ? new Date() : null }),
-        ...(adminFlagged !== undefined && { adminFlagged, flaggedReason: adminFlagged ? flaggedReason : "" }),
+        ...(status !== undefined && {
+          status,
+          completedAt: status === "completed" ? new Date() : null,
+        }),
+        ...(adminFlagged !== undefined && {
+          adminFlagged,
+          flaggedReason: adminFlagged ? flaggedReason : "",
+        }),
       },
-      { new: true }
+      { new: true },
     ).populate("alumniId");
 
     if (!donation) {
@@ -463,7 +497,7 @@ exports.flagDonation = async (req, res) => {
         flaggedReason: adminFlagged ? flaggedReason : "",
         flaggedAt: adminFlagged ? new Date() : null,
       },
-      { new: true }
+      { new: true },
     ).populate("alumniId");
 
     if (!donation) {
@@ -511,7 +545,7 @@ exports.updateDonationStatus = async (req, res) => {
         status,
         completedAt: status === "completed" ? new Date() : null,
       },
-      { new: true }
+      { new: true },
     ).populate("alumniId");
 
     if (!donation) {

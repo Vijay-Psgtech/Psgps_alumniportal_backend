@@ -56,14 +56,26 @@ exports.register = async (req, res) => {
 
     const hasClassRange = classFrom !== undefined || classTo !== undefined;
     if (hasClassRange) {
-      const classLevels = ["KG", ...Array.from({ length: 12 }, (_, index) => String(index + 1))];
+      const classLevels = [
+        "KG",
+        ...Array.from({ length: 12 }, (_, index) => String(index + 1)),
+      ];
       const from = classLevels.indexOf(classFrom);
       const to = classLevels.indexOf(classTo);
       if (from === -1 || to === -1 || to < from) {
-        return res.status(400).json({ message: "Enter a valid class range from KG to 12" });
+        return res
+          .status(400)
+          .json({ message: "Enter a valid class range from KG to 12" });
       }
-      if (to >= classLevels.indexOf("11") && !["Science", "Management"].includes(stream)) {
-        return res.status(400).json({ message: "Select Science or Management for classes 11 and 12" });
+      if (
+        to >= classLevels.indexOf("11") &&
+        !["Science", "Management"].includes(stream)
+      ) {
+        return res
+          .status(400)
+          .json({
+            message: "Select Science or Management for classes 11 and 12",
+          });
       }
     }
 
@@ -97,7 +109,8 @@ exports.register = async (req, res) => {
       gender,
       occupation,
       company,
-      stream: hasClassRange && !["11", "12"].includes(classTo) ? undefined : stream,
+      stream:
+        hasClassRange && !["11", "12"].includes(classTo) ? undefined : stream,
       batchYear,
       ...(hasClassRange ? { classFrom, classTo } : {}),
       city,

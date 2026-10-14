@@ -13,11 +13,10 @@ exports.getAllEvents = async (req, res) => {
     console.log("Query", query);
     const events = await Event.find(query).sort({ createdAt: -1 });
 
-   res.json({
+    res.json({
       success: true,
       data: events,
     });
-
   } catch (error) {
     console.error("Error fetching events:", error);
     res.status(500).json({
@@ -26,7 +25,6 @@ exports.getAllEvents = async (req, res) => {
     });
   }
 };
-
 
 exports.getEventsById = async (req, res) => {
   try {

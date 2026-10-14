@@ -5,7 +5,7 @@ exports.getAllAlbum = async (req, res) => {
   try {
     const albums = await Album.find().sort({ createdAt: -1 });
 
-    const albumsData = albums.map(album => ({
+    const albumsData = albums.map((album) => ({
       id: album.id,
       year: album.year,
       title: album.title,
@@ -15,19 +15,18 @@ exports.getAllAlbum = async (req, res) => {
       accent: album.accent,
       tags: album.tags,
       images: album.images,
-      coverImage: album.images && album.images.length > 0 ? album.images[0] : null,
+      coverImage:
+        album.images && album.images.length > 0 ? album.images[0] : null,
       createdAt: album.createdAt,
       updatedAt: album.updatedAt,
     }));
 
-
     res.json({ success: true, data: albumsData });
-
-  } catch(error) {
+  } catch (error) {
     console.error("Error fetching albums:", error);
     res.status(500).json({ success: false, message: "Failed to fetch albums" });
   }
-}
+};
 
 // ── GET albums for a specific year ──────────────────────────────────
 exports.getAlbumByYear = async (req, res) => {

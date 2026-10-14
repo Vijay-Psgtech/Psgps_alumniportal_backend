@@ -92,7 +92,6 @@ exports.updateAlumniProfile = async (req, res) => {
       }
     });
 
-
     // ── 2. Geo coordinates → location GeoJSON ─────────────────────────────
     if (req.body.coordinates) {
       let coords = req.body.coordinates;
@@ -273,7 +272,6 @@ exports.getAlumniBatchWise = async (req, res) => {
       Alumni.distinct("occupation", { batchYear }),
       Alumni.distinct("stream", { batchYear }),
     ]);
-    
 
     res.status(200).json({
       success: true,
@@ -467,7 +465,7 @@ exports.getAlumniStats = async (req, res) => {
 
 // fetching distinct stream & batch from alumni modal
 
-exports.getAlumniFilters  = async (req, res) => {
+exports.getAlumniFilters = async (req, res) => {
   try {
     const [streams, batches] = await Promise.all([
       Alumni.distinct("stream"),

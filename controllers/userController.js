@@ -38,7 +38,7 @@ exports.createUser = async (req, res) => {
 // Get all users (Admin)
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find({ role: "admin"}).select("-password");
+    const users = await User.find({ role: "admin" }).select("-password");
     res.json(users);
   } catch (error) {
     console.error(error);
