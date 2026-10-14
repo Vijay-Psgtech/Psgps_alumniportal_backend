@@ -7,7 +7,9 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const createFolder = (alumniId) => {
       if (!alumniId) {
-        return cb(new Error("Missing alumni identifier for upload destination"));
+        return cb(
+          new Error("Missing alumni identifier for upload destination"),
+        );
       }
       const folder = `uploads/alumni/${alumniId}/`;
       fs.mkdirSync(folder, { recursive: true });
@@ -31,7 +33,6 @@ const storage = multer.diskStorage({
     }
 
     cb(new Error("Missing alumni identifier for upload destination"));
-
   },
 
   filename: function (req, file, cb) {
@@ -56,7 +57,6 @@ const storage = multer.diskStorage({
     const ext = path.extname(file.originalname);
 
     cb(null, `${fileName}${ext}`);
-
   },
 });
 

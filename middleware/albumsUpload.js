@@ -8,9 +8,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const createFolder = (title) => {
       if (!title) {
-        return cb(
-          new Error("Missing album identifier for upload destination"),
-        );
+        return cb(new Error("Missing album identifier for upload destination"));
       }
       const folder = `uploads/albums/${title}/`;
       fs.mkdirSync(folder, { recursive: true });
