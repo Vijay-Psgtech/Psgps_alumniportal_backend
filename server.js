@@ -60,7 +60,6 @@ app.use("/api/banner", require("./routes/bannerRoutes"));
 app.use("/api/campaigns", require("./routes/campaigns"));
 app.use("/api/contact", require("./routes/contact"));
 
-
 app.use((err, _req, res, _next) => {
   console.error("Unhandled error:", err);
   res.status(err.status || 500).json({
