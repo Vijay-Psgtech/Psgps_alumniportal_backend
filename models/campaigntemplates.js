@@ -3,7 +3,8 @@ const CAMPAIGN_TEMPLATES = {
   nostalgicStory: {
     id: "nostalgic-story",
     title: "Nostalgic Stories",
-    description: "Collect heartwarming stories from alumni about their college days",
+    description:
+      "Collect heartwarming stories from alumni about their college days",
     category: "Nostalgic Stories",
     duration: 14,
     formFields: [
@@ -31,8 +32,8 @@ const CAMPAIGN_TEMPLATES = {
         fieldType: "select",
         label: "Batch Year",
         required: true,
-        options: Array.from({ length: 30 }, (_, i) => 
-          String(new Date().getFullYear() - i)
+        options: Array.from({ length: 30 }, (_, i) =>
+          String(new Date().getFullYear() - i),
         ),
       },
       {
@@ -41,7 +42,13 @@ const CAMPAIGN_TEMPLATES = {
         fieldType: "select",
         label: "Department",
         required: true,
-        options: ["Computer Science", "Electronics", "Mechanical", "Civil", "Others"],
+        options: [
+          "Computer Science",
+          "Electronics",
+          "Mechanical",
+          "Civil",
+          "Others",
+        ],
       },
       {
         fieldId: "story-photo",
@@ -208,7 +215,13 @@ const CAMPAIGN_TEMPLATES = {
         fieldType: "checkbox",
         label: "What type of events interest you?",
         required: true,
-        options: ["Virtual Meet", "Physical Reunion", "Guest Lecture", "Workshop", "Networking Event"],
+        options: [
+          "Virtual Meet",
+          "Physical Reunion",
+          "Guest Lecture",
+          "Workshop",
+          "Networking Event",
+        ],
       },
       {
         fieldId: "preferred-month",
@@ -216,7 +229,20 @@ const CAMPAIGN_TEMPLATES = {
         fieldType: "select",
         label: "Preferred Month for Event",
         required: true,
-        options: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        options: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ],
       },
       {
         fieldId: "participation",
@@ -271,7 +297,13 @@ const CAMPAIGN_TEMPLATES = {
         fieldType: "select",
         label: "Award Category",
         required: true,
-        options: ["Entrepreneur of the Year", "Social Impact Award", "Professional Excellence", "Young Achiever", "Life-Time Achievement"],
+        options: [
+          "Entrepreneur of the Year",
+          "Social Impact Award",
+          "Professional Excellence",
+          "Young Achiever",
+          "Life-Time Achievement",
+        ],
       },
       {
         fieldId: "reasons",

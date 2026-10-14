@@ -56,11 +56,17 @@ const AlumniSchema = new mongoose.Schema(
     },
     classFrom: {
       type: String,
-      enum: ["KG", ...Array.from({ length: 12 }, (_, index) => String(index + 1))],
+      enum: [
+        "KG",
+        ...Array.from({ length: 12 }, (_, index) => String(index + 1)),
+      ],
     },
     classTo: {
       type: String,
-      enum: ["KG", ...Array.from({ length: 12 }, (_, index) => String(index + 1))],
+      enum: [
+        "KG",
+        ...Array.from({ length: 12 }, (_, index) => String(index + 1)),
+      ],
     },
     batchYear: {
       type: String,

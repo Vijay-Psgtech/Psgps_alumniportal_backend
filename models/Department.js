@@ -43,7 +43,7 @@ const departmentSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Index for faster queries

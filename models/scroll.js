@@ -54,8 +54,8 @@ const notificationSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    collection: "notification_scrolls",  // ✅ Changed collection name too
-  }
+    collection: "notification_scrolls", // ✅ Changed collection name too
+  },
 );
 
 // Index for faster queries

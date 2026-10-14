@@ -65,7 +65,7 @@ const bannerSchema = new mongoose.Schema(
   {
     timestamps: true,
     collection: "banners",
-  }
+  },
 );
 
 // Index for faster queries
@@ -74,10 +74,9 @@ bannerSchema.index({ isActive: 1, createdAt: -1 });
 // Pre-save hook to ensure only one active banner
 bannerSchema.pre("save", async function (next) {
   if (this.isActive) {
-    await mongoose.model("Banner").updateMany(
-      { _id: { $ne: this._id } },
-      { isActive: false }
-    );
+    await mongoose
+      .model("Banner")
+      .updateMany({ _id: { $ne: this._id } }, { isActive: false });
   }
   next();
 });

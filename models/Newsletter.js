@@ -6,7 +6,13 @@ const newsletterSchema = new mongoose.Schema(
     date: { type: Date, required: true },
     category: {
       type: String,
-      enum: ["Newsletters", "Alumni Stories", "Accolades/Accreditations", "Institute Updates", "Events"],
+      enum: [
+        "Newsletters",
+        "Alumni Stories",
+        "Accolades/Accreditations",
+        "Institute Updates",
+        "Events",
+      ],
       default: "Newsletters",
     },
     description: { type: String, required: true },
