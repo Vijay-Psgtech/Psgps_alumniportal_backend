@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const {
-    getAllNewsLetters,
-    getNewsLetterById,
-    createNewsLetter,
-    updateNewsLetter,
-    deleteNewsLetter,
-    getNewsLettersByCategory
+  getAllNewsLetters,
+  getNewsLetterById,
+  createNewsLetter,
+  updateNewsLetter,
+  deleteNewsLetter,
+  getNewsLettersByCategory,
 } = require("../controllers/newsLetterController");
 const upload = require("../middleware/uploads");
 

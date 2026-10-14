@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/active", async (req, res) => {
   try {
     const banner = await Banner.findOne({ isActive: true });
-    
+
     if (!banner) {
       return res.json({
         success: true,
@@ -20,12 +20,12 @@ router.get("/active", async (req, res) => {
           features: [
             { icon: "Users", text: "12K+ Alumni" },
             { icon: "Globe", text: "35+ Countries" },
-            { icon: "Sparkles", text: "200+ Events" }
+            { icon: "Sparkles", text: "200+ Events" },
           ],
           primaryButtonText: "Join Now",
           secondaryButtonText: "Learn More",
-          isActive: true
-        }
+          isActive: true,
+        },
       });
     }
 
@@ -50,12 +50,20 @@ router.get("/", authMiddleware, superAdminMiddleware, async (req, res) => {
 // ✅ CREATE banner (ADMIN ONLY)
 router.post("/", authMiddleware, superAdminMiddleware, async (req, res) => {
   try {
-    const { title, subtitle, description, backgroundImage, features, primaryButtonText, secondaryButtonText } = req.body;
+    const {
+      title,
+      subtitle,
+      description,
+      backgroundImage,
+      features,
+      primaryButtonText,
+      secondaryButtonText,
+    } = req.body;
 
     if (!title || !description || !backgroundImage) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: "Title, description, and backgroundImage required" 
+        message: "Title, description, and backgroundImage required",
       });
     }
 
@@ -68,7 +76,7 @@ router.post("/", authMiddleware, superAdminMiddleware, async (req, res) => {
       primaryButtonText,
       secondaryButtonText,
       isActive: false,
-      createdBy: req.user.id
+      createdBy: req.user.id,
     });
 
     await banner.save();
@@ -85,11 +93,13 @@ router.put("/:id", authMiddleware, superAdminMiddleware, async (req, res) => {
     const banner = await Banner.findByIdAndUpdate(
       req.params.id,
       { ...req.body, updatedAt: Date.now() },
-      { new: true }
+      { new: true },
     );
 
     if (!banner) {
-      return res.status(404).json({ success: false, message: "Banner not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Banner not found" });
     }
 
     res.json({ success: true, data: banner });
@@ -100,40 +110,54 @@ router.put("/:id", authMiddleware, superAdminMiddleware, async (req, res) => {
 });
 
 // ✅ DELETE banner (ADMIN ONLY)
-router.delete("/:id", authMiddleware, superAdminMiddleware, async (req, res) => {
-  try {
-    const banner = await Banner.findByIdAndDelete(req.params.id);
+router.delete(
+  "/:id",
+  authMiddleware,
+  superAdminMiddleware,
+  async (req, res) => {
+    try {
+      const banner = await Banner.findByIdAndDelete(req.params.id);
 
-    if (!banner) {
-      return res.status(404).json({ success: false, message: "Banner not found" });
+      if (!banner) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Banner not found" });
+      }
+
+      res.json({ success: true, message: "Banner deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting banner:", error);
+      res.status(500).json({ success: false, message: error.message });
     }
-
-    res.json({ success: true, message: "Banner deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting banner:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+  },
+);
 
 // ✅ SET banner as active (ADMIN ONLY)
-router.patch("/:id/set-active", authMiddleware, superAdminMiddleware, async (req, res) => {
-  try {
-    await Banner.updateMany({}, { isActive: false });
-    const banner = await Banner.findByIdAndUpdate(
-      req.params.id,
-      { isActive: true, updatedAt: Date.now() },
-      { new: true }
-    );
+router.patch(
+  "/:id/set-active",
+  authMiddleware,
+  superAdminMiddleware,
+  async (req, res) => {
+    try {
+      await Banner.updateMany({}, { isActive: false });
+      const banner = await Banner.findByIdAndUpdate(
+        req.params.id,
+        { isActive: true, updatedAt: Date.now() },
+        { new: true },
+      );
 
-    if (!banner) {
-      return res.status(404).json({ success: false, message: "Banner not found" });
+      if (!banner) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Banner not found" });
+      }
+
+      res.json({ success: true, data: banner });
+    } catch (error) {
+      console.error("Error setting banner active:", error);
+      res.status(500).json({ success: false, message: error.message });
     }
-
-    res.json({ success: true, data: banner });
-  } catch (error) {
-    console.error("Error setting banner active:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+  },
+);
 
 module.exports = router;

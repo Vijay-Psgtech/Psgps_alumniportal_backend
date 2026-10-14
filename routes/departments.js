@@ -9,13 +9,22 @@ const {
   getAllDepartmentsAdmin,
   toggleDepartmentStatus,
 } = require("../controllers/departmentController");
-const { authMiddleware, adminMiddleware, superAdminMiddleware } = require("../middleware/auth");
+const {
+  authMiddleware,
+  adminMiddleware,
+  superAdminMiddleware,
+} = require("../middleware/auth");
 
 const router = express.Router();
 
 // ── ADMIN ROUTES (more specific, must come first) ──
 // Get all departments (including inactive) - admin only
-router.get("/admin/all", authMiddleware, superAdminMiddleware, getAllDepartmentsAdmin);
+router.get(
+  "/admin/all",
+  authMiddleware,
+  superAdminMiddleware,
+  getAllDepartmentsAdmin,
+);
 
 // Create new department
 router.post("/", authMiddleware, superAdminMiddleware, createDepartment);
@@ -27,7 +36,12 @@ router.put("/:id", authMiddleware, superAdminMiddleware, updateDepartment);
 router.delete("/:id", authMiddleware, superAdminMiddleware, deleteDepartment);
 
 // Toggle department active status
-router.patch("/:id/toggle", authMiddleware, superAdminMiddleware, toggleDepartmentStatus);
+router.patch(
+  "/:id/toggle",
+  authMiddleware,
+  superAdminMiddleware,
+  toggleDepartmentStatus,
+);
 
 // ── PUBLIC ROUTES (less specific, come after admin routes) ──
 // Get all active departments
